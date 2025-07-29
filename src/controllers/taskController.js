@@ -2,17 +2,17 @@ const taskModel = require("../models/taskModel");
 const { validationResult } = require("express-validator");
 
 //Obtener todas las tareas
-const getTasks = async (req, res) => {
+const getTasks = async (req, res, next) => {
   try {
     const tasks = await taskModel.getTasks();
     res.json(tasks);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
 //Obtener tarea por id
-const getTaskById = async (req, res) => {
+const getTaskById = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -26,11 +26,11 @@ const getTaskById = async (req, res) => {
       res.json(task);
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
-const createTask = async (req, res) => {
+const createTask = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -39,11 +39,11 @@ const createTask = async (req, res) => {
     const newTask = await taskModel.createTask(req.body);
     res.status(201).json(newTask);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
-const updateTask = async (req, res) => {
+const updateTask = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -57,11 +57,11 @@ const updateTask = async (req, res) => {
       res.json(updatedTask);
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
-const deleteTask = async (req, res) => {
+const deleteTask = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -74,7 +74,7 @@ const deleteTask = async (req, res) => {
       res.json({ message: "Tarea eliminada", tarea_eliminada: deletedTask });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
